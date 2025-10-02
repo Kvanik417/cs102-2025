@@ -2,5 +2,6 @@
 
 
 def text() -> str:
-    """Возвращает приветственное сообщение."""
-    return "Hello, world!"
+    """Возвращает строку 'message'."""
+    return "message"
+
