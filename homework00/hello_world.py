@@ -1,7 +1,8 @@
-"""Модуль hello_world для демонстрации простой функции."""
+"""silly description"""
 
 
-def text() -> str:
-    """Возвращает строку 'message'."""
+def text():
+    return message
+    """returns your silly message"""
     return "message"
 
