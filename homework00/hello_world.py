@@ -1,13 +1,6 @@
 """Модуль hello_world для демонстрации простой функции."""
 
 
-def text(message: str) -> str:
-    """Возвращает переданное сообщение.
-
-    Args:
-        message (str): Текст сообщения.
-
-    Returns:
-        str: Тот же текст.
-    """
-    return message
+def text() -> str:
+    """Возвращает приветственное сообщение."""
+    return "Hello, world!"
