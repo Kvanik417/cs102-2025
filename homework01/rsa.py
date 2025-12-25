@@ -18,13 +18,13 @@ def is_prime(n: int) -> bool:
 
 
 def multiplicative_inverse(e: int, phi: int) -> int:
-    a, b = phi, e
-    x0, x1 = 0, 1
-    while b != 0:
-        q = a // b
-        a, b = b, a % b
-        x0, x1 = x1 - q * x0, x0
-    return x1 % phi
+    t, new_t = 0, 1
+    r, new_r = phi, e
+    while new_r != 0:
+        q = r // new_r
+        t, new_t = new_t, t - q * new_t
+        r, new_r = new_r, r - q * new_r
+    return t % phi
 
 
 def generate_keypair(p: int, q: int) -> Tuple[Tuple[int, int], Tuple[int, int]]:
