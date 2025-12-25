@@ -1,6 +1,6 @@
 import math
-
 from typing import Tuple
+
 
 def gcd(a: int, b: int) -> int:
     while b:
