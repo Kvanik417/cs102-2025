@@ -1,127 +1,92 @@
 import pathlib
+import random
 import typing as tp
 
 T = tp.TypeVar("T")
 
 
 def read_sudoku(path: tp.Union[str, pathlib.Path]) -> tp.List[tp.List[str]]:
-    """ Прочитать Судоку из указанного файла """
-    path = pathlib.Path(path)
-    with path.open() as f:
-        puzzle = f.read()
-    return create_grid(puzzle)
-
-
-def create_grid(puzzle: str) -> tp.List[tp.List[str]]:
-    digits = [c for c in puzzle if c in "123456789."]
-    grid = group(digits, 9)
-    return grid
+    return group([c for c in pathlib.Path(path).read_text() if c in "123456789."], 9)
 
 
 def display(grid: tp.List[tp.List[str]]) -> None:
-    """Вывод Судоку """
-    width = 2
-    line = "+".join(["-" * (width * 3)] * 3)
-    for row in range(9):
-        print(
-            "".join(
-                grid[row][col].center(width) + ("|" if str(col) in "25" else "") for col in range(9)
-            )
-        )
-        if str(row) in "25":
+    w = 2
+    line = "+".join(["-" * (w * 3)] * 3)
+    for r in range(9):
+        print("".join(grid[r][c].center(w) + ("|" if c in (2, 5) else "") for c in range(9)))
+        if r in (2, 5):
             print(line)
     print()
 
 
 def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
-    return [values[i:i+n] for i in range(0, len(values), n)]
+    return [values[i * n : (i + 1) * n] for i in range(n)]
 
 
-def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
-    row, _ = pos
-    return grid[row]
+def get_row(g, p):
+    return g[p[0]]
 
 
-def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
-    _, col = pos
-    return [grid[r][col] for r in range(len(grid))]
+def get_col(g, p):
+    return [r[p[1]] for r in g]
 
 
-def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
-    row, col = pos
-    start_row = 3 * (row // 3)
-    start_col = 3 * (col // 3)
-    return [
-        grid[r][c]
-        for r in range(start_row, start_row + 3)
-        for c in range(start_col, start_col + 3)
-    ]
+def get_block(g, p):
+    r, c = p
+    br, bc = (r // 3) * 3, (c // 3) * 3
+    return [g[br + i][bc + j] for i in range(3) for j in range(3)]
 
 
-def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[int, int]]:
-    for r in range(len(grid)):
-        for c in range(len(grid[r])):
-            if grid[r][c] == ".":
-                return (r, c)
+def find_empty_positions(g):
+    return next(((r, c) for r in range(9) for c in range(9) if g[r][c] == "."), None)
+
+
+def find_possible_values(g, p):
+    return set("123456789") - set(get_row(g, p)) - set(get_col(g, p)) - set(get_block(g, p))
+
+
+def solve(g):
+    p = find_empty_positions(g)
+    if p is None:
+        return g
+    r, c = p
+    for v in find_possible_values(g, p):
+        g[r][c] = v
+        if solve(g):
+            return g
+        g[r][c] = "."
     return None
 
 
-def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
-    used = set(get_row(grid, pos)) | set(get_col(grid, pos)) | set(get_block(grid, pos))
-    return set("123456789") - used
+def check_solution(s):
+    e = set("123456789")
+    return all(
+        set(get_row(s, (i, 0))) == e
+        and set(get_col(s, (0, i))) == e
+        for i in range(9)
+    ) and all(
+        set(get_block(s, (r, c))) == e
+        for r in (0, 3, 6)
+        for c in (0, 3, 6)
+    )
 
 
-def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
-    empty = find_empty_positions(grid)
-    if not empty:
-        return grid
-    r, c = empty
-    for value in find_possible_values(grid, (r, c)):
-        grid[r][c] = value
-        solution = solve(grid)
-        if solution:
-            return solution
-        grid[r][c] = "."
-    return None
-
-
-def check_solution(solution: tp.List[tp.List[str]]) -> bool:
-    for i in range(9):
-        row = get_row(solution, (i, 0))
-        col = get_col(solution, (0, i))
-        if '.' in row or '.' in col:
-            return False
-        for j in range(1, 10):
-            if row.count(str(j)) > 1 or col.count(str(j)) > 1:
-                return False
-    for r in [0, 3, 6]:
-        for c in [0, 3, 6]:
-            block = get_block(solution, (r, c))
-            if '.' in block:
-                return False
-            for j in range(1, 10):
-                if block.count(str(j)) > 1:
-                    return False
-    return True
-
-
-
-def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
-    from random import shuffle
-    grid = solve([["."]*9 for _ in range(9)])
-    positions = [(r, c) for r in range(9) for c in range(9)]
-    shuffle(positions)
-    for r, c in positions[N:]:
-        grid[r][c] = "."
-    return grid
+def generate_sudoku(N: int):
+    g = solve([["."] * 9 for _ in range(9)])
+    N = max(0, min(N, 81))
+    pos = [(r, c) for r in range(9) for c in range(9)]
+    random.shuffle(pos)
+    for r, c in pos[N:]:
+        g[r][c] = "."
+    return g
 
 
 if __name__ == "__main__":
-    for fname in ["puzzle1.txt", "puzzle2.txt", "puzzle3.txt"]:
-        grid = read_sudoku(fname)
-        display(grid)
-        solution = solve(grid)
-        if not solution:
-            print(f"Puzzle {fname} can't be solved")
+    for f in ["puzzle1.txt", "puzzle2.txt", "puzzle3.txt"]:
+        g = read_sudoku(f)
+        display(g)
+        s = solve(g)
+        if s:
+            display(s)
         else:
-            display(solution)
+            print(f"Puzzle {f} can't be solved")
