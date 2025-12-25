@@ -60,8 +60,9 @@ def solve(g: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
     r, c = p
     for v in find_possible_values(g, p):
         g[r][c] = v
-        if solve(g):
-            return g
+        result = solve(g)
+        if result is not None:
+            return result
         g[r][c] = "."
     return None
 
@@ -75,6 +76,8 @@ def check_solution(s: tp.List[tp.List[str]]) -> bool:
 
 def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
     g = solve([["."] * 9 for _ in range(9)])
+    if g is None:
+        g = [["."] * 9 for _ in range(9)]
     N = max(0, min(N, 81))
     pos = [(r, c) for r in range(9) for c in range(9)]
     random.shuffle(pos)
