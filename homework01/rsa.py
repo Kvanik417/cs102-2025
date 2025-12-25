@@ -1,12 +1,10 @@
-import random
 from typing import Tuple
-
+import random
 
 def gcd(a: int, b: int) -> int:
     while b != 0:
         a, b = b, a % b
     return a
-
 
 def is_prime(n: int) -> bool:
     if n < 2:
@@ -16,17 +14,18 @@ def is_prime(n: int) -> bool:
             return False
     return True
 
-
 def multiplicative_inverse(e: int, phi: int) -> int:
-    original_phi = phi
+    a, b = phi, e
     x0, x1 = 0, 1
-    while e > 0:
-        q, e, phi = phi // e, phi % e, e
+    while b != 0:
+        q = a // b
+        a, b = b, a % b
         x0, x1 = x1 - q * x0, x0
-    return x1 % original_phi
-
+    return x1 % phi
 
 def generate_keypair(p: int, q: int) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+    if not (is_prime(p) and is_prime(q)):
+        raise ValueError("Both numbers must be prime.")
     n = p * q
     phi = (p - 1) * (q - 1)
     e = 3
@@ -35,11 +34,9 @@ def generate_keypair(p: int, q: int) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     d = multiplicative_inverse(e, phi)
     return (e, n), (d, n)
 
-
 def encrypt(pk: Tuple[int, int], plaintext: str) -> list[int]:
     key, n = pk
     return [pow(ord(char), key, n) for char in plaintext]
-
 
 def decrypt(pk: Tuple[int, int], ciphertext: list[int]) -> str:
     key, n = pk
