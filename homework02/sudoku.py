@@ -45,8 +45,12 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
     return None
 
 
-def find_possible_values(g, p):
-    return set("123456789") - set(get_row(g, p)) - set(get_col(g, p)) - set(get_block(g, p))
+def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[int, int]]:
+    for r in range(len(grid)):
+        for c in range(len(grid[r])):
+            if grid[r][c] == ".":
+                return (r, c)
+    return None
 
 
 def solve(g):
