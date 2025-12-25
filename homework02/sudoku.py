@@ -37,8 +37,12 @@ def get_block(g, p):
     return [g[br + i][bc + j] for i in range(3) for j in range(3)]
 
 
-def find_empty_positions(g):
-    return next(((r, c) for r in range(9) for c in range(9) if g[r][c] == "."), None)
+def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[int, int]]:
+    for r in range(9):
+        for c in range(9):
+            if grid[r][c] == ".":
+                return (r, c)
+    return None
 
 
 def find_possible_values(g, p):
