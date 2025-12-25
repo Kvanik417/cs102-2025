@@ -60,9 +60,9 @@ def solve(g):
 
 def check_solution(s):
     e = set("123456789")
-    return all(
-        set(get_row(s, (i, 0))) == e and set(get_col(s, (0, i))) == e for i in range(9)
-    ) and all(set(get_block(s, (r, c))) == e for r in (0, 3, 6) for c in (0, 3, 6))
+    return all(set(get_row(s, (i, 0))) == e and set(get_col(s, (0, i))) == e for i in range(9)) and all(
+        set(get_block(s, (r, c))) == e for r in (0, 3, 6) for c in (0, 3, 6)
+    )
 
 
 def generate_sudoku(N: int):
