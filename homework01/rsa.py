@@ -1,7 +1,6 @@
 import math
 from typing import Tuple
 
-
 def gcd(a: int, b: int) -> int:
     while b:
         a, b = b, a % b
@@ -11,7 +10,7 @@ def gcd(a: int, b: int) -> int:
 def is_prime(n: int) -> bool:
     if n < 2:
         return False
-    for i in range(2, int(n ** 0.5) + 1):
+    for i in range(2, int(n**0.5) + 1):
         if n % i == 0:
             return False
     return True
@@ -32,8 +31,7 @@ def generate_keypair(p: int, q: int) -> Tuple[Tuple[int, int], Tuple[int, int]]:
         raise ValueError
     n = p * q
     phi = (p - 1) * (q - 1)
-    start = int(math.isqrt(n)) + 1
-    e = start
+    e = math.isqrt(n) + 1
     while gcd(e, phi) != 1:
         e += 1
     d = multiplicative_inverse(e, phi)
