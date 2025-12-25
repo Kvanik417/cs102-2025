@@ -1,6 +1,7 @@
 from typing import Tuple
 import random
 
+
 def gcd(a: int, b: int) -> int:
     while b != 0:
         a, b = b, a % b
