@@ -1,4 +1,6 @@
 from typing import Tuple
+import random
+
 
 def is_prime(n: int) -> bool:
     if n < 2:
@@ -8,10 +10,12 @@ def is_prime(n: int) -> bool:
             return False
     return True
 
+
 def gcd(a: int, b: int) -> int:
     while b != 0:
         a, b = b, a % b
     return a
+
 
 def multiplicative_inverse(e: int, phi: int) -> int:
     old_r, r = phi, e
@@ -22,31 +26,24 @@ def multiplicative_inverse(e: int, phi: int) -> int:
         old_r, r = r, old_r - quotient * r
         old_s, s = s, old_s - quotient * s
         old_t, t = t, old_t - quotient * t
-    if old_t < 0:
-        old_t += phi
-    return old_t
+    return t % phi
+
 
 def generate_keypair(p: int, q: int) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     if not (is_prime(p) and is_prime(q)):
-        raise ValueError('Both numbers must be prime.')
+        raise ValueError("Both numbers must be prime.")
     elif p == q:
-        raise ValueError('p and q cannot be equal')
+        raise ValueError("p and q cannot be equal")
 
     n = p * q
     phi = (p - 1) * (q - 1)
 
-    if (p, q) == (17, 19):
-        e, d = 121, 169
-    elif (p, q) == (1229, 1381):
-        e, d = 142169, 734969
-    elif (p, q) == (3259, 3433):
-        e, d = 9678731, 1804547
-    else:
-        e = 2
-        while e < phi:
-            if gcd(e, phi) == 1:
-                break
-            e += 1
-        d = multiplicative_inverse(e, phi)
+    e = random.randrange(2, phi)
+    g = gcd(e, phi)
+    while g != 1:
+        e = random.randrange(2, phi)
+        g = gcd(e, phi)
+
+    d = multiplicative_inverse(e, phi)
 
     return ((e, n), (d, n))
