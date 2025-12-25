@@ -26,3 +26,5 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
         else:
             plaintext += char
     return plaintext
+
+# <- добавьте ровно одну пустую строку в конце файла
