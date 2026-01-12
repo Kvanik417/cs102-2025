@@ -1,5 +1,5 @@
 from copy import deepcopy
-from random import choice
+from random import choice, randint
 from typing import List, Optional, Tuple, Union
 
 import pandas as pd
@@ -14,25 +14,25 @@ def create_grid(rows: int = 15, cols: int = 15) -> List[List[Cell]]:
 def remove_wall(grid: List[List[Cell]], coord: Tuple[int, int]) -> List[List[Cell]]:
     x, y = coord
     new_grid = deepcopy(grid)
-    directions = []
+    possible_directions = []
     if x > 1 and new_grid[x - 1][y] == "■":
-        directions.append("up")
+        possible_directions.append("up")
     if y < len(new_grid[0]) - 2 and new_grid[x][y + 1] == "■":
-        directions.append("right")
+        possible_directions.append("right")
     if x < len(new_grid) - 2 and new_grid[x + 1][y] == "■":
-        directions.append("down")
+        possible_directions.append("down")
     if y > 1 and new_grid[x][y - 1] == "■":
-        directions.append("left")
-    if not directions:
+        possible_directions.append("left")
+    if not possible_directions:
         return new_grid
-    d = choice(directions)
-    if d == "up":
+    direction = choice(possible_directions)
+    if direction == "up":
         new_grid[x - 1][y] = " "
-    elif d == "right":
+    elif direction == "right":
         new_grid[x][y + 1] = " "
-    elif d == "down":
+    elif direction == "down":
         new_grid[x + 1][y] = " "
-    elif d == "left":
+    elif direction == "left":
         new_grid[x][y - 1] = " "
     return new_grid
 
@@ -46,15 +46,15 @@ def bin_tree_maze(rows: int = 15, cols: int = 15, random_exit: bool = True) -> L
             empty_cells.append((x, y))
     for x, y in empty_cells:
         direction = choice(["up", "right"])
-        can_up = x > 1
-        can_right = y < cols - 2
-        if direction == "up" and can_up:
+        can_go_up = x > 1
+        can_go_right = y < cols - 2
+        if direction == "up" and can_go_up:
             grid[x - 1][y] = " "
-        elif direction == "right" and can_right:
+        elif direction == "right" and can_go_right:
             grid[x][y + 1] = " "
-        elif can_up:
+        elif can_go_up:
             grid[x - 1][y] = " "
-        elif can_right:
+        elif can_go_right:
             grid[x][y + 1] = " "
 
     def pick_exit() -> Tuple[int, int]:
@@ -100,30 +100,29 @@ def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
 
 def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Optional[List[Tuple[int, int]]]:
     path = [exit_coord]
-    cur = exit_coord
-    cur_value = grid[cur[0]][cur[1]]
+    cur_coord = exit_coord
+    cur_value = grid[cur_coord[0]][cur_coord[1]]
     if not isinstance(cur_value, int):
         return None
     while cur_value != 1:
         neighbors = [
-            (cur[0] + dx, cur[1] + dy)
+            (cur_coord[0] + dx, cur_coord[1] + dy)
             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
-            if 0 <= cur[0] + dx < len(grid)
-            and 0 <= cur[1] + dy < len(grid[0])
-            and isinstance(grid[cur[0] + dx][cur[1] + dy], int)
-            and grid[cur[0] + dx][cur[1] + dy] == cur_value - 1
+            if 0 <= cur_coord[0] + dx < len(grid)
+            and 0 <= cur_coord[1] + dy < len(grid[0])
+            and grid[cur_coord[0] + dx][cur_coord[1] + dy] == cur_value - 1
         ]
         if not neighbors:
-            grid[cur[0]][cur[1]] = " "
+            grid[cur_coord[0]][cur_coord[1]] = " "
             path.pop()
             if not path:
                 return None
-            cur = path[-1]
-            cur_value = grid[cur[0]][cur[1]]
+            cur_coord = path[-1]
+            cur_value = grid[cur_coord[0]][cur_coord[1]]
         else:
-            cur = neighbors[0]
-            cur_value = grid[cur[0]][cur[1]]
-            path.append(cur)
+            cur_coord = neighbors[0]
+            cur_value = grid[cur_coord[0]][cur_coord[1]]
+            path.append(cur_coord)
     return path
 
 
@@ -141,24 +140,24 @@ def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[
     exits = get_exits(grid)
     if len(exits) != 2:
         return grid, None
-    for e in exits:
-        if encircled_exit(grid, e):
+    for an_exit in exits:
+        if encircled_exit(grid, an_exit):
             return grid, None
-    start, end = exits
+    start_coord, end_coord = exits
     q_grid = deepcopy(grid)
     for r in range(len(q_grid)):
         for c in range(len(q_grid[0])):
             if q_grid[r][c] == " ":
                 q_grid[r][c] = 0
-    q_grid[start[0]][start[1]] = 1
+    q_grid[start_coord[0]][start_coord[1]] = 1
     k = 1
-    while q_grid[end[0]][end[1]] == 0:
+    while q_grid[end_coord[0]][end_coord[1]] == 0:
         prev = deepcopy(q_grid)
         make_step(q_grid, k)
         if q_grid == prev:
             return grid, None
         k += 1
-    path = shortest_path(q_grid, end)
+    path = shortest_path(q_grid, end_coord)
     return grid, path
 
 
