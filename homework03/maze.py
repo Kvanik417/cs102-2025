@@ -85,10 +85,7 @@ def get_exits(grid: List[List[Cell]]) -> List[Tuple[int, int]]:
 
 def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
     indices: List[Tuple[int, int]] = [
-        (x, y)
-        for x in range(len(grid))
-        for y in range(len(grid[0]))
-        if isinstance(grid[x][y], int) and grid[x][y] == k
+        (x, y) for x in range(len(grid)) for y in range(len(grid[0])) if isinstance(grid[x][y], int) and grid[x][y] == k
     ]
     for x, y in indices:
         for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
@@ -129,8 +126,7 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
 def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     x, y = coord
     free_neighbors = sum(
-        1
-        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        1 for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
         if 0 <= x + dx < len(grid) and 0 <= y + dy < len(grid[0]) and grid[x + dx][y + dy] == " "
     )
     return free_neighbors == 0
