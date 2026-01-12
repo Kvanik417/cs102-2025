@@ -84,7 +84,12 @@ def get_exits(grid: List[List[Cell]]) -> List[Tuple[int, int]]:
 
 
 def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
-    indices = [(x, y) for x in range(len(grid)) for y in range(len(grid[0])) if isinstance(grid[x][y], int) and grid[x][y] == k]
+    indices: List[Tuple[int, int]] = [
+        (x, y)
+        for x in range(len(grid))
+        for y in range(len(grid[0]))
+        if isinstance(grid[x][y], int) and grid[x][y] == k
+    ]
     for x, y in indices:
         for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             nx, ny = x + dx, y + dy
