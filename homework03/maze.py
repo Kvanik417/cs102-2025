@@ -1,5 +1,5 @@
 from copy import deepcopy
-from random import choice, randint
+from random import choice
 from typing import List, Optional, Tuple, Union
 
 import pandas as pd
@@ -23,10 +23,8 @@ def remove_wall(grid: List[List[Cell]], coord: Tuple[int, int]) -> List[List[Cel
         possible_directions.append("down")
     if y > 1 and new_grid[x][y - 1] == "■":
         possible_directions.append("left")
-
     if not possible_directions:
         return new_grid
-
     direction = choice(possible_directions)
     if direction == "up":
         new_grid[x - 1][y] = " "
@@ -42,12 +40,10 @@ def remove_wall(grid: List[List[Cell]], coord: Tuple[int, int]) -> List[List[Cel
 def bin_tree_maze(rows: int = 15, cols: int = 15, random_exit: bool = True) -> List[List[Cell]]:
     grid = create_grid(rows, cols)
     empty_cells: List[Tuple[int, int]] = []
-
     for x in range(1, rows, 2):
         for y in range(1, cols, 2):
             grid[x][y] = " "
             empty_cells.append((x, y))
-
     for x, y in empty_cells:
         direction = choice(["up", "right"])
         can_go_up = x > 1
@@ -104,13 +100,13 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
     cur_value = grid[cur_coord[0]][cur_coord[1]]
     if not isinstance(cur_value, int):
         return None
-
     while cur_value != 1:
         neighbors = [
             (cur_coord[0] + dx, cur_coord[1] + dy)
             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
             if 0 <= cur_coord[0] + dx < len(grid)
             and 0 <= cur_coord[1] + dy < len(grid[0])
+            and isinstance(grid[cur_coord[0] + dx][cur_coord[1] + dy], int)
             and grid[cur_coord[0] + dx][cur_coord[1] + dy] == cur_value - 1
         ]
         if not neighbors:
@@ -141,18 +137,15 @@ def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[
     exits = get_exits(grid)
     if len(exits) != 2:
         return grid, None
-
     for an_exit in exits:
         if encircled_exit(grid, an_exit):
             return grid, None
-
     start_coord, end_coord = exits
     q_grid = deepcopy(grid)
     for r in range(len(q_grid)):
         for c in range(len(q_grid[0])):
             if q_grid[r][c] == " ":
                 q_grid[r][c] = 0
-
     q_grid[start_coord[0]][start_coord[1]] = 1
     k = 1
     while q_grid[end_coord[0]][end_coord[1]] == 0:
@@ -161,7 +154,6 @@ def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[
         if q_grid == prev:
             return grid, None
         k += 1
-
     path = shortest_path(q_grid, end_coord)
     return grid, path
 
@@ -179,3 +171,4 @@ if __name__ == "__main__":
     _, PATH = solve_maze(GRID)
     MAZE = add_path_to_grid(GRID, PATH)
     print(pd.DataFrame(MAZE))
+
