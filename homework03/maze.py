@@ -123,12 +123,9 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
     return path
 
 
-def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
+def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]]) -> bool:
     x, y = coord
-    free_neighbors = sum(
-        1 for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
-        if 0 <= x + dx < len(grid) and 0 <= y + dy < len(grid[0]) and grid[x + dx][y + dy] == " "
-    )
+    free_neighbors = sum(1 for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)] if 0 <= x + dx < len(grid) and 0 <= y + dy < len(grid[0]) and grid[x + dx][y + dy] == " ")
     return free_neighbors == 0
 
 
