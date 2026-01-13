@@ -2,6 +2,7 @@ from copy import deepcopy
 from typing import List, Optional, Tuple, Union
 
 import pandas as pd
+import random
 
 Cell = Union[str, int]
 
@@ -36,22 +37,21 @@ def remove_wall(grid: List[List[Cell]], coord: Tuple[int, int]) -> List[List[Cel
     return new_grid
 
 
-def bin_tree_maze(rows: int = 15, cols: int = 15) -> List[List[Cell]]:
+def bin_tree_maze(rows=15, cols=15):
     grid = create_grid(rows, cols)
     for x in range(1, rows, 2):
         for y in range(1, cols, 2):
             grid[x][y] = " "
-            if x > 1 and y < cols - 2:
-                if (x + y) % 2 == 0:
-                    grid[x - 1][y] = " "
-                else:
-                    grid[x][y + 1] = " "
-            elif x > 1:
-                grid[x - 1][y] = " "
-            elif y < cols - 2:
-                grid[x][y + 1] = " "
-    grid[0][cols - 1] = "X"
-    grid[rows - 1][0] = "X"
+            directions = []
+            if x > 1:
+                directions.append((-1, 0))
+            if y < cols - 2:
+                directions.append((0, 1))
+            if directions:
+                dx, dy = random.choice(directions)
+                grid[x+dx][y+dy] = " "
+    grid[0][cols-1] = "X"
+    grid[rows-1][0] = "X"
     return grid
 
 
@@ -60,12 +60,16 @@ def get_exits(grid: List[List[Cell]]) -> List[Tuple[int, int]]:
 
 
 def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
-    indices = [(x, y) for x in range(len(grid)) for y in range(len(grid[0])) if grid[x][y] == k]
-    for x, y in indices:
-        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == 0:
-                grid[nx][ny] = k + 1
+    new_coords = []
+    for x in range(len(grid)):
+        for y in range(len(grid[0])):
+            if grid[x][y] == k:
+                for dx, dy in [(-1,0),(1,0),(0,-1),(0,1)]:
+                    nx, ny = x+dx, y+dy
+                    if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == 0:
+                        new_coords.append((nx, ny))
+    for nx, ny in new_coords:
+        grid[nx][ny] = k+1
     return grid
 
 
