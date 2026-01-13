@@ -37,7 +37,7 @@ def remove_wall(grid: List[List[Cell]], coord: Tuple[int, int]) -> List[List[Cel
     return new_grid
 
 
-def bin_tree_maze(rows=15, cols=15):
+def bin_tree_maze(rows: int = 15, cols: int = 15) -> List[List[Cell]]:
     grid = create_grid(rows, cols)
     for x in range(1, rows, 2):
         for y in range(1, cols, 2):
@@ -45,11 +45,12 @@ def bin_tree_maze(rows=15, cols=15):
             directions = []
             if x > 1:
                 directions.append((-1, 0))
-            if y < cols - 2:
-                directions.append((0, 1))
+            if y > 1:
+                directions.append((0, -1))
             if directions:
                 dx, dy = random.choice(directions)
                 grid[x + dx][y + dy] = " "
+    # Старт и конец в углах
     grid[0][cols - 1] = "X"
     grid[rows - 1][0] = "X"
     return grid
@@ -66,14 +67,17 @@ def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
             if grid[x][y] == k:
                 for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                     nx, ny = x + dx, y + dy
-                    if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == 0:
-                        new_coords.append((nx, ny))
+                    if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]):
+                        if grid[nx][ny] == 0:
+                            new_coords.append((nx, ny))
     for nx, ny in new_coords:
         grid[nx][ny] = k + 1
     return grid
 
 
-def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Optional[List[Tuple[int, int]]]:
+def shortest_path(
+    grid: List[List[Cell]], exit_coord: Tuple[int, int]
+) -> Optional[List[Tuple[int, int]]]:
     path: List[Tuple[int, int]] = [exit_coord]
     cur_coord: Tuple[int, int] = exit_coord
     cur_cell = grid[cur_coord[0]][cur_coord[1]]
@@ -89,7 +93,6 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
                 neighbor_cell = grid[nx][ny]
                 if isinstance(neighbor_cell, int) and neighbor_cell == cur_value - 1:
                     neighbors.append((nx, ny))
-
         if not neighbors:
             grid[cur_coord[0]][cur_coord[1]] = " "
             path.pop()
@@ -107,7 +110,6 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
                 return None
             cur_value = cur_cell
             path.append(cur_coord)
-
     return path
 
 
@@ -115,8 +117,9 @@ def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     x, y = coord
     neighbors = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
     for nx, ny in neighbors:
-        if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] in (" ", "X"):
-            return False
+        if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]):
+            if grid[nx][ny] == " ":
+                return False
     return True
 
 
