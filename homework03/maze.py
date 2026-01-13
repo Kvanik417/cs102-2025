@@ -1,8 +1,8 @@
 from copy import deepcopy
+import random
 from typing import List, Optional, Tuple, Union
 
 import pandas as pd
-import random
 
 Cell = Union[str, int]
 
