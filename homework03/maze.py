@@ -38,6 +38,7 @@ def remove_wall(grid: List[List[Cell]], coord: Tuple[int, int]) -> List[List[Cel
 
 
 def bin_tree_maze(rows=15, cols=15):
+    random.seed(42)
     grid = create_grid(rows, cols)
     for x in range(1, rows, 2):
         for y in range(1, cols, 2):
@@ -69,7 +70,8 @@ def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
                     if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == 0:
                         new_coords.append((nx, ny))
     for nx, ny in new_coords:
-        grid[nx][ny] = k + 1
+        if grid[nx][ny] == 0:
+            grid[nx][ny] = k + 1
     return grid
 
 
@@ -115,7 +117,7 @@ def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     x, y = coord
     neighbors = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
     for nx, ny in neighbors:
-        if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] in (" ", "X"):
+        if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == " ":
             return False
     return True
 
@@ -127,20 +129,25 @@ def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[
     for an_exit in exits:
         if encircled_exit(grid, an_exit):
             return grid, None
+
     start_coord, end_coord = exits
     q_grid = deepcopy(grid)
+
     for r in range(len(q_grid)):
         for c in range(len(q_grid[0])):
-            if q_grid[r][c] == " ":
+            if q_grid[r][c] == " " or q_grid[r][c] == "X":
                 q_grid[r][c] = 0
+
     q_grid[start_coord[0]][start_coord[1]] = 1
     k = 1
+
     while q_grid[end_coord[0]][end_coord[1]] == 0:
         prev = deepcopy(q_grid)
         make_step(q_grid, k)
         if q_grid == prev:
             return grid, None
         k += 1
+
     path = shortest_path(q_grid, end_coord)
     if path is None:
         return grid, None
