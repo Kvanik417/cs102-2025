@@ -103,9 +103,7 @@ def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     free_neighbors = sum(
         1
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
-        if 0 <= x + dx < len(grid)
-        and 0 <= y + dy < len(grid[0])
-        and grid[x + dx][y + dy] in (" ", "X")
+        if 0 <= x + dx < len(grid) and 0 <= y + dy < len(grid[0]) and grid[x + dx][y + dy] in (" ", "X")
     )
     return free_neighbors == 0
 
