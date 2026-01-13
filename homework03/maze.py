@@ -51,7 +51,6 @@ def bin_tree_maze(rows: int = 15, cols: int = 15) -> List[List[Cell]]:
 
     x_in, y_in = 0, cols - 2
     x_out, y_out = rows - 1, 1
-
     grid[x_in][y_in] = "X"
     grid[x_out][y_out] = "X"
 
@@ -79,7 +78,9 @@ def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
     return grid
 
 
-def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Optional[List[Tuple[int, int]]]:
+def shortest_path(
+    grid: List[List[Cell]], exit_coord: Tuple[int, int]
+) -> Optional[List[Tuple[int, int]]]:
     path = [exit_coord]
     cur_coord = exit_coord
     cur_value = grid[cur_coord[0]][cur_coord[1]]
@@ -110,7 +111,7 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
     return path
 
 
-def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
+def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]]) -> bool:
     x, y = coord
     free_neighbors = sum(
         1
@@ -122,7 +123,9 @@ def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     return free_neighbors == 0
 
 
-def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[Tuple[int, int]]]]:
+def solve_maze(
+    grid: List[List[Cell]]
+) -> Tuple[List[List[Cell]], Optional[List[Tuple[int, int]]]]:
     exits = get_exits(grid)
     if len(exits) != 2:
         return grid, None
@@ -147,7 +150,9 @@ def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[
     return grid, path
 
 
-def add_path_to_grid(grid: List[List[Cell]], path: Optional[List[Tuple[int, int]]]) -> List[List[Cell]]:
+def add_path_to_grid(
+    grid: List[List[Cell]], path: Optional[List[Tuple[int, int]]]
+) -> List[List[Cell]]:
     if path:
         for x, y in path:
             grid[x][y] = "X"
