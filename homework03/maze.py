@@ -80,14 +80,16 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
     if not isinstance(cur_cell, int):
         return None
     cur_value: int = cur_cell
+
     while cur_value != 1:
         neighbors: List[Tuple[int, int]] = []
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == 0:
-                new_coords.append((nx, ny))
+            nx, ny = cur_coord[0] + dx, cur_coord[1] + dy
+            if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]):
+                neighbor_cell = grid[nx][ny]
                 if isinstance(neighbor_cell, int) and neighbor_cell == cur_value - 1:
                     neighbors.append((nx, ny))
+
         if not neighbors:
             grid[cur_coord[0]][cur_coord[1]] = " "
             path.pop()
@@ -105,6 +107,7 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
                 return None
             cur_value = cur_cell
             path.append(cur_coord)
+
     return path
 
 
