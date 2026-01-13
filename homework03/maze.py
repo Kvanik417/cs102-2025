@@ -41,19 +41,14 @@ def bin_tree_maze(rows: int = 15, cols: int = 15) -> List[List[Cell]]:
     for x in range(1, rows, 2):
         for y in range(1, cols, 2):
             grid[x][y] = " "
-            can_go_up = x > 1
-            can_go_right = y < cols - 2
-            if can_go_up and can_go_right:
-                direction = "up" if (x + y) % 2 == 0 else "right"
-            elif can_go_up:
-                direction = "up"
-            elif can_go_right:
-                direction = "right"
-            else:
-                continue
-            if direction == "up":
+            if x > 1 and y < cols - 2:
+                if (x + y) % 2 == 0:
+                    grid[x - 1][y] = " "
+                else:
+                    grid[x][y + 1] = " "
+            elif x > 1:
                 grid[x - 1][y] = " "
-            elif direction == "right":
+            elif y < cols - 2:
                 grid[x][y + 1] = " "
     grid[0][cols - 1] = "X"
     grid[rows - 1][0] = "X"
@@ -67,7 +62,7 @@ def get_exits(grid: List[List[Cell]]) -> List[Tuple[int, int]]:
 def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
     indices = [(x, y) for x in range(len(grid)) for y in range(len(grid[0])) if grid[x][y] == k]
     for x, y in indices:
-        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nx, ny = x + dx, y + dy
             if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == 0:
                 grid[nx][ny] = k + 1
@@ -77,12 +72,11 @@ def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
 def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Optional[List[Tuple[int, int]]]:
     path: List[Tuple[int, int]] = [exit_coord]
     cur_coord: Tuple[int, int] = exit_coord
-    cur_cell = grid[cur_coord[0]][cur_coord[1]]
-    if not isinstance(cur_cell, int):
+    cur_value = grid[cur_coord[0]][cur_coord[1]]
+    if not isinstance(cur_value, int):
         return None
-    cur_value: int = cur_cell
     while cur_value != 1:
-        neighbors: List[Tuple[int, int]] = [
+        neighbors = [
             (cur_coord[0] + dx, cur_coord[1] + dy)
             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
             if 0 <= cur_coord[0] + dx < len(grid)
@@ -96,16 +90,10 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
             if not path:
                 return None
             cur_coord = path[-1]
-            cur_cell = grid[cur_coord[0]][cur_coord[1]]
-            if not isinstance(cur_cell, int):
-                return None
-            cur_value = cur_cell
+            cur_value = grid[cur_coord[0]][cur_coord[1]]
         else:
             cur_coord = neighbors[0]
-            cur_cell = grid[cur_coord[0]][cur_coord[1]]
-            if not isinstance(cur_cell, int):
-                return None
-            cur_value = cur_cell
+            cur_value = grid[cur_coord[0]][cur_coord[1]]
             path.append(cur_coord)
     return path
 
@@ -115,7 +103,9 @@ def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     free_neighbors = sum(
         1
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
-        if 0 <= x + dx < len(grid) and 0 <= y + dy < len(grid[0]) and grid[x + dx][y + dy] in (" ", "X")
+        if 0 <= x + dx < len(grid)
+        and 0 <= y + dy < len(grid[0])
+        and grid[x + dx][y + dy] in (" ", "X")
     )
     return free_neighbors == 0
 
