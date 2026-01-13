@@ -42,11 +42,16 @@ def bin_tree_maze(rows: int = 15, cols: int = 15) -> List[List[Cell]]:
     for x in range(1, rows, 2):
         for y in range(1, cols, 2):
             grid[x][y] = " "
-            if x > 1 and y < cols - 2:
+            can_go_up = x > 1
+            can_go_right = y < cols - 2
+            direction = "up" if can_go_up else "right"
+            if direction == "up" and can_go_up:
                 grid[x - 1][y] = " "
-            elif x > 1:
+            elif direction == "right" and can_go_right:
+                grid[x][y + 1] = " "
+            elif can_go_up:
                 grid[x - 1][y] = " "
-            elif y < cols - 2:
+            elif can_go_right:
                 grid[x][y + 1] = " "
 
     x_in, y_in = 0, cols - 2
@@ -94,6 +99,7 @@ def shortest_path(
             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
             if 0 <= cur_coord[0] + dx < len(grid)
             and 0 <= cur_coord[1] + dy < len(grid[0])
+            and isinstance(grid[cur_coord[0] + dx][cur_coord[1] + dy], int)
             and grid[cur_coord[0] + dx][cur_coord[1] + dy] == cur_value - 1
         ]
         if not neighbors:
