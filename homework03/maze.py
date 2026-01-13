@@ -1,5 +1,4 @@
 from copy import deepcopy
-from random import choice, randint
 from typing import List, Optional, Tuple, Union
 
 import pandas as pd
@@ -25,7 +24,7 @@ def remove_wall(grid: List[List[Cell]], coord: Tuple[int, int]) -> List[List[Cel
         possible_directions.append("left")
     if not possible_directions:
         return new_grid
-    direction = choice(possible_directions)
+    direction = possible_directions[0]
     if direction == "up":
         new_grid[x - 1][y] = " "
     elif direction == "right":
@@ -59,28 +58,6 @@ def bin_tree_maze(rows: int = 15, cols: int = 15) -> List[List[Cell]]:
     return grid
 
 
-    def pick_exit() -> Tuple[int, int]:
-        candidates = (
-            [(0, y) for y in range(cols)]
-            + [(rows - 1, y) for y in range(cols)]
-            + [(x, 0) for x in range(rows)]
-            + [(x, cols - 1) for x in range(rows)]
-        )
-        return choice(candidates)
-
-    if random_exit:
-        x_in, y_in = pick_exit()
-        x_out, y_out = pick_exit()
-        while (x_in, y_in) == (x_out, y_out):
-            x_out, y_out = pick_exit()
-    else:
-        x_in, y_in = 0, cols - 2
-        x_out, y_out = rows - 1, 1
-    grid[x_in][y_in] = "X"
-    grid[x_out][y_out] = "X"
-    return grid
-
-
 def get_exits(grid: List[List[Cell]]) -> List[Tuple[int, int]]:
     return [(x, y) for x, row in enumerate(grid) for y, c in enumerate(row) if c == "X"]
 
@@ -110,8 +87,6 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
     if not isinstance(cur_value, int):
         return None
 
-    assert isinstance(cur_value, int)
-
     while cur_value != 1:
         neighbors = [
             (cur_coord[0] + dx, cur_coord[1] + dy)
@@ -127,11 +102,9 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
                 return None
             cur_coord = path[-1]
             cur_value = grid[cur_coord[0]][cur_coord[1]]
-            assert isinstance(cur_value, int)
         else:
             cur_coord = neighbors[0]
             cur_value = grid[cur_coord[0]][cur_coord[1]]
-            assert isinstance(cur_value, int)
             path.append(cur_coord)
 
     return path
