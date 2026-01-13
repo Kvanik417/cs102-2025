@@ -120,7 +120,6 @@ def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     return True
 
 
-
 def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[Tuple[int, int]]]]:
     exits = get_exits(grid)
     if len(exits) != 2:
