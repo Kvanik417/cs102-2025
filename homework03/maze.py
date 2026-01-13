@@ -73,9 +73,7 @@ def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
     return grid
 
 
-def shortest_path(
-    grid: List[List[Cell]], exit_coord: Tuple[int, int]
-) -> Optional[List[Tuple[int, int]]]:
+def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Optional[List[Tuple[int, int]]]:
     path: List[Tuple[int, int]] = [exit_coord]
     cur_coord: Tuple[int, int] = exit_coord
     cur_cell = grid[cur_coord[0]][cur_coord[1]]
