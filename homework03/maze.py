@@ -37,25 +37,27 @@ def remove_wall(grid: List[List[Cell]], coord: Tuple[int, int]) -> List[List[Cel
     return new_grid
 
 
-def bin_tree_maze(rows: int = 15, cols: int = 15, random_exit: bool = True) -> List[List[Cell]]:
+def bin_tree_maze(rows: int = 15, cols: int = 15) -> List[List[Cell]]:
     grid = create_grid(rows, cols)
-    empty_cells: List[Tuple[int, int]] = []
+
     for x in range(1, rows, 2):
         for y in range(1, cols, 2):
             grid[x][y] = " "
-            empty_cells.append((x, y))
-    for x, y in empty_cells:
-        direction = choice(["up", "right"])
-        can_go_up = x > 1
-        can_go_right = y < cols - 2
-        if direction == "up" and can_go_up:
-            grid[x - 1][y] = " "
-        elif direction == "right" and can_go_right:
-            grid[x][y + 1] = " "
-        elif can_go_up:
-            grid[x - 1][y] = " "
-        elif can_go_right:
-            grid[x][y + 1] = " "
+            if x > 1 and y < cols - 2:
+                grid[x - 1][y] = " "
+            elif x > 1:
+                grid[x - 1][y] = " "
+            elif y < cols - 2:
+                grid[x][y + 1] = " "
+
+    x_in, y_in = 0, cols - 2
+    x_out, y_out = rows - 1, 1
+
+    grid[x_in][y_in] = "X"
+    grid[x_out][y_out] = "X"
+
+    return grid
+
 
     def pick_exit() -> Tuple[int, int]:
         candidates = (
@@ -84,14 +86,19 @@ def get_exits(grid: List[List[Cell]]) -> List[Tuple[int, int]]:
 
 
 def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
-    indices: List[Tuple[int, int]] = [
-        (x, y) for x in range(len(grid)) for y in range(len(grid[0])) if isinstance(grid[x][y], int) and grid[x][y] == k
+    indices = [
+        (x, y)
+        for x in range(len(grid))
+        for y in range(len(grid[0]))
+        if grid[x][y] == k
     ]
+
     for x, y in indices:
         for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             nx, ny = x + dx, y + dy
             if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == 0:
                 grid[nx][ny] = k + 1
+
     return grid
 
 
@@ -135,7 +142,9 @@ def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     free_neighbors = sum(
         1
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
-        if 0 <= x + dx < len(grid) and 0 <= y + dy < len(grid[0]) and grid[x + dx][y + dy] == " "
+        if 0 <= x + dx < len(grid)
+        and 0 <= y + dy < len(grid[0])
+        and grid[x + dx][y + dy] in (" ", "X")
     )
     return free_neighbors == 0
 
