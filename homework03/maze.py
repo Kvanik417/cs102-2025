@@ -64,8 +64,8 @@ def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
     for x in range(len(grid)):
         for y in range(len(grid[0])):
             if grid[x][y] == k:
-                for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                    nx, ny = x + dx, y + dy
+                for dx, dy in [(-1,0),(1,0),(0,-1),(0,1)]:
+                    nx, ny = x+dx, y+dy
                     if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == 0:
                         new_coords.append((nx, ny))
     for nx, ny in new_coords:
@@ -83,12 +83,13 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
 
     while cur_value != 1:
         neighbors: List[Tuple[int, int]] = []
-        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        for dx, dy in [(-1,0),(1,0),(0,-1),(0,1)]:
             nx, ny = cur_coord[0] + dx, cur_coord[1] + dy
             if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]):
                 neighbor_cell = grid[nx][ny]
                 if isinstance(neighbor_cell, int) and neighbor_cell == cur_value - 1:
                     neighbors.append((nx, ny))
+
 
         if not neighbors:
             grid[cur_coord[0]][cur_coord[1]] = " "
@@ -113,12 +114,11 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
 
 def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     x, y = coord
-    free_neighbors = sum(
-        1
-        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
-        if 0 <= x + dx < len(grid) and 0 <= y + dy < len(grid[0]) and grid[x + dx][y + dy] in (" ", "X")
-    )
-    return free_neighbors == 0
+    neighbors = [(x-1,y),(x+1,y),(x,y-1),(x,y+1)]
+    for nx, ny in neighbors:
+        if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] in (" ", "X"):
+            return False
+    return True
 
 
 def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[Tuple[int, int]]]]:
