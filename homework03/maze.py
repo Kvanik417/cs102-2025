@@ -90,7 +90,6 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
                 if isinstance(neighbor_cell, int) and neighbor_cell == cur_value - 1:
                     neighbors.append((nx, ny))
 
-
         if not neighbors:
             grid[cur_coord[0]][cur_coord[1]] = " "
             path.pop()
