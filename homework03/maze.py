@@ -48,7 +48,7 @@ def bin_tree_maze(rows=15, cols=15):
             if y > 1:
                 directions.append((0, -1))
             if directions:
-                dx, dy = random.choice(directions)
+                dx, dy = directions[0]
                 grid[x + dx][y + dy] = " "
     grid[0][0] = "X"
     grid[rows - 1][cols - 1] = "X"
@@ -115,9 +115,10 @@ def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     x, y = coord
     neighbors = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
     for nx, ny in neighbors:
-        if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == " ":
+        if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] in (" ", "X"):
             return False
     return True
+
 
 
 def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[Tuple[int, int]]]]:
@@ -142,6 +143,8 @@ def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[
             return grid, None
         k += 1
     path = shortest_path(q_grid, end_coord)
+    if path is None:
+        return grid, None
     return grid, path
 
 
