@@ -1,12 +1,13 @@
 from copy import deepcopy
 from typing import List, Optional, Tuple, Union
-
 import pandas as pd
 
 Cell = Union[str, int]
 
+
 def create_grid(rows: int = 15, cols: int = 15) -> List[List[Cell]]:
     return [["■"] * cols for _ in range(rows)]
+
 
 def remove_wall(grid: List[List[Cell]], coord: Tuple[int, int]) -> List[List[Cell]]:
     x, y = coord
@@ -33,6 +34,7 @@ def remove_wall(grid: List[List[Cell]], coord: Tuple[int, int]) -> List[List[Cel
         new_grid[x][y - 1] = " "
     return new_grid
 
+
 def bin_tree_maze(rows: int = 15, cols: int = 15) -> List[List[Cell]]:
     grid = create_grid(rows, cols)
     for x in range(1, rows, 2):
@@ -56,8 +58,10 @@ def bin_tree_maze(rows: int = 15, cols: int = 15) -> List[List[Cell]]:
     grid[rows - 1][0] = "X"
     return grid
 
+
 def get_exits(grid: List[List[Cell]]) -> List[Tuple[int, int]]:
     return [(x, y) for x, row in enumerate(grid) for y, c in enumerate(row) if c == "X"]
+
 
 def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
     indices = [(x, y) for x in range(len(grid)) for y in range(len(grid[0])) if grid[x][y] == k]
@@ -67,6 +71,7 @@ def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
             if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == 0:
                 grid[nx][ny] = k + 1
     return grid
+
 
 def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Optional[List[Tuple[int, int]]]:
     path: List[Tuple[int, int]] = [exit_coord]
@@ -103,6 +108,7 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
             path.append(cur_coord)
     return path
 
+
 def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     x, y = coord
     free_neighbors = sum(
@@ -111,6 +117,7 @@ def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
         if 0 <= x + dx < len(grid) and 0 <= y + dy < len(grid[0]) and grid[x + dx][y + dy] in (" ", "X")
     )
     return free_neighbors == 0
+
 
 def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[Tuple[int, int]]]]:
     exits = get_exits(grid)
@@ -136,11 +143,13 @@ def solve_maze(grid: List[List[Cell]]) -> Tuple[List[List[Cell]], Optional[List[
     path = shortest_path(q_grid, end_coord)
     return grid, path
 
+
 def add_path_to_grid(grid: List[List[Cell]], path: Optional[List[Tuple[int, int]]]) -> List[List[Cell]]:
     if path:
         for x, y in path:
             grid[x][y] = "X"
     return grid
+
 
 if __name__ == "__main__":
     GRID = bin_tree_maze(15, 15)
