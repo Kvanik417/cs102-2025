@@ -73,14 +73,17 @@ def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
     return grid
 
 
-def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Optional[List[Tuple[int, int]]]:
-    path = [exit_coord]
-    cur_coord = exit_coord
-    cur_value = grid[cur_coord[0]][cur_coord[1]]
-    if not isinstance(cur_value, int):
+def shortest_path(
+    grid: List[List[Cell]], exit_coord: Tuple[int, int]
+) -> Optional[List[Tuple[int, int]]]:
+    path: List[Tuple[int, int]] = [exit_coord]
+    cur_coord: Tuple[int, int] = exit_coord
+    cur_cell = grid[cur_coord[0]][cur_coord[1]]
+    if not isinstance(cur_cell, int):
         return None
+    cur_value: int = cur_cell
     while cur_value != 1:
-        neighbors = [
+        neighbors: List[Tuple[int, int]] = [
             (cur_coord[0] + dx, cur_coord[1] + dy)
             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
             if 0 <= cur_coord[0] + dx < len(grid)
@@ -94,10 +97,16 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
             if not path:
                 return None
             cur_coord = path[-1]
-            cur_value = grid[cur_coord[0]][cur_coord[1]]
+            cur_cell = grid[cur_coord[0]][cur_coord[1]]
+            if not isinstance(cur_cell, int):
+                return None
+            cur_value = cur_cell
         else:
             cur_coord = neighbors[0]
-            cur_value = grid[cur_coord[0]][cur_coord[1]]
+            cur_cell = grid[cur_coord[0]][cur_coord[1]]
+            if not isinstance(cur_cell, int):
+                return None
+            cur_value = cur_cell
             path.append(cur_coord)
     return path
 
