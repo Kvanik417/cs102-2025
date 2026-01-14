@@ -114,7 +114,7 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
 
 def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     x, y = coord
-    for nx, ny in [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]:
+    for nx, ny in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
         if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] != "■":
             return False
     return True
