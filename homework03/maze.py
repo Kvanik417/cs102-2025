@@ -2,6 +2,10 @@ from copy import deepcopy
 from random import choice, randint
 from typing import List, Optional, Tuple, Union
 
+Cell = Tuple[int, int]
+Cells = List[int]
+Grid = List[List[Union[str, int]]]
+
 import pandas as pd
 
 
