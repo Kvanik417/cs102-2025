@@ -51,7 +51,7 @@ def bin_tree_maze(rows=15, cols=15):
                 dx, dy = directions[0]  # берем строго первое направление
                 grid[x + dx][y + dy] = " "
     grid[0][0] = "X"
-    grid[rows-1][cols-1] = "X"
+    grid[rows - 1][cols - 1] = "X"
     return grid
 
 
