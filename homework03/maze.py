@@ -51,7 +51,7 @@ def bin_tree_maze(rows: int = 15, cols: int = 15, random_exit: bool = True) -> L
 
 
 def get_exits(grid: List[List[Union[str, int]]]) -> List[Tuple[int, int]]:
-    exits = []
+    exits: List[Tuple[int, int]] = []
     for x, row in enumerate(grid):
         for y, _ in enumerate(row):
             if len(exits) == 2:
