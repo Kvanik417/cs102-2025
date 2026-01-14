@@ -70,15 +70,10 @@ def make_step(grid: List[List[Union[str, int]]], k: int) -> List[List[Union[str,
             if grid[x][y] == k:
                 for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                     nx, ny = x + dx, y + dy
-                    while (
-                        0 <= nx < rows
-                        and 0 <= ny < cols
-                        and grid[nx][ny] == 0
-                    ):
+                    while 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == 0:
                         to_fill.append((nx, ny))
                         nx += dx
                         ny += dy
-
     for x, y in to_fill:
         grid[x][y] = k + 1
 
