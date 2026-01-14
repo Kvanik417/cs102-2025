@@ -48,7 +48,7 @@ def bin_tree_maze(rows=15, cols=15):
             if y > 1:
                 directions.append((0, -1))
             if directions:
-                dx, dy = directions[0]  # берем строго первое направление
+                dx, dy = random.choice(directions)  # случайный выбор вместо directions[0]
                 grid[x + dx][y + dy] = " "
     grid[0][0] = "X"
     grid[rows - 1][cols - 1] = "X"
@@ -69,8 +69,7 @@ def make_step(grid: List[List[Cell]], k: int) -> List[List[Cell]]:
                     if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] == 0:
                         new_coords.append((nx, ny))
     for nx, ny in new_coords:
-        if grid[nx][ny] == 0:
-            grid[nx][ny] = k + 1
+        grid[nx][ny] = k + 1
     return grid
 
 
@@ -114,9 +113,11 @@ def shortest_path(grid: List[List[Cell]], exit_coord: Tuple[int, int]) -> Option
 
 def encircled_exit(grid: List[List[Cell]], coord: Tuple[int, int]) -> bool:
     x, y = coord
-    for nx, ny in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
-        if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] != "■":
-            return False
+    for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        nx, ny = x + dx, y + dy
+        if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]):
+            if grid[nx][ny] != "■":
+                return False
     return True
 
 
