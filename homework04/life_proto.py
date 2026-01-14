@@ -150,4 +150,3 @@ class GameOfLife:
                         new_grid[i][j] = 0
 
         return new_grid
-    
