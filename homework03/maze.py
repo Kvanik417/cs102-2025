@@ -63,18 +63,16 @@ def get_exits(grid: List[List[Union[str, int]]]) -> List[Tuple[int, int]]:
 
 def make_step(grid: List[List[Union[str, int]]], k: int) -> List[List[Union[str, int]]]:
     rows, cols = len(grid), len(grid[0])
-    to_fill: List[Tuple[int, int]] = []
 
     for x in range(rows):
         for y in range(cols):
             if grid[x][y] == k:
                 for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                     nx, ny = x + dx, y + dy
-                    if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == 0:
-                        to_fill.append((nx, ny))
-
-    for x, y in to_fill:
-        grid[x][y] = k + 1
+                    while 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == 0:
+                        grid[nx][ny] = k + 1
+                        nx += dx
+                        ny += dy
 
     return grid
 
