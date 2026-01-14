@@ -72,8 +72,8 @@ def make_step(grid: Grid, k: int) -> Grid:
     for x in range(rows):
         for y in range(cols):
             if grid[x][y] == k:
-                for dx, dy in [(-1,0),(1,0),(0,-1),(0,1)]:
-                    nx, ny = x+dx, y+dy
+                for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                    nx, ny = x + dx, y + dy
                     if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == 0:
                         to_fill.append((nx, ny))
     for nx, ny in to_fill:
