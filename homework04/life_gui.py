@@ -89,4 +89,3 @@ if __name__ == "__main__":
     game = GameOfLife(size=(50, 50))
     gui = GUI(game)
     gui.run()
-    
